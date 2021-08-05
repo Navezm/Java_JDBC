@@ -1,8 +1,11 @@
 package be.digitalcity.formation;
 
 import be.digitalcity.formation.model.Section;
+import be.digitalcity.formation.model.Student;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
+import java.util.Scanner;
 
 public class Main {
 
@@ -11,7 +14,7 @@ public class Main {
 //        String url = "jdbc:postgresql://localhost:5432/DBSlide";
 //        String username = "postgres";
 //        String password = "123456";
-
+//
 //        Connection co = null;
 //        try () {
 //            System.out.println("Trying connection");
