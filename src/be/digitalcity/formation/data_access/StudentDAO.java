@@ -96,9 +96,9 @@ public class StudentDAO implements DAO<Student, Long>{
         ) {
 
             return 0 < stmt.executeUpdate("UPDATE student " +
-                    " SET first_name="+ student.getFirstName() +", last_name="+ student.getLastName() + ", birth_date=" + student.getBirthDate() +
-                    ", login=" + student.getLogin() + ", section_id=" + student.getSectionId() + ", year_result=" + student.getYearResult() + ", course_id=" + student.getCourseId() +
-                    " WHERE section_id = "+ student.getId());
+                    " SET first_name='"+ student.getFirstName() + "'" +", last_name='" + student.getLastName() + "'" + ", birth_date='" + student.getBirthDate() + "'" +
+                    ", login='" + student.getLogin() + "'" + ", section_id='" + student.getSectionId() + "'" + ", year_result='" + student.getYearResult() + "'" + ", course_id='" + student.getCourseId() + "'" +
+                    " WHERE student_id = "+ student.getId());
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -158,7 +158,7 @@ public class StudentDAO implements DAO<Student, Long>{
                 Statement stmt = co.createStatement();
         ) {
 
-            return 0 < stmt.executeUpdate("DELETE FROM student WHERE first_name = " + name);
+            return 0 < stmt.executeUpdate("DELETE FROM student WHERE first_name = " + "'" + name + "'");
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

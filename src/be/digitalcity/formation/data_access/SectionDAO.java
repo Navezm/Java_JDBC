@@ -100,7 +100,7 @@ public class SectionDAO implements DAO<Section, Long> {
         ) {
 
             return 0 < stmt.executeUpdate("UPDATE section " +
-                    " SET section_name="+ section.getName() +", delegate_id="+ section.getDelegateId() +
+                    " SET section_name='"+ section.getName() + "'" +", delegate_id="+ section.getDelegateId() +
                     " WHERE section_id = "+ section.getId());
 
         } catch (SQLException e) {
