@@ -1,13 +1,12 @@
 package be.digitalcity.formation.data_access;
 
 import be.digitalcity.formation.ConnectionFactory;
+import be.digitalcity.formation.mapper.Mapper;
 import be.digitalcity.formation.model.Section;
 import be.digitalcity.formation.model.Student;
+import be.digitalcity.formation.model.StudentDTO;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +14,9 @@ public class StudentDAO implements DAO<Student, Long>{
 
 //    Singleton
     private static StudentDAO instance;
-
     public static StudentDAO getInstance(){
         return instance == null ? instance = new StudentDAO() : instance;
     }
-
     private StudentDAO(){}
 //    Fin Singleton
 
@@ -54,11 +51,36 @@ public class StudentDAO implements DAO<Student, Long>{
         ) {
 
             if(rs.next()) {
-                s = extract(rs);
+                s = Mapper.toStudentDTO(rs);
             }
 
         } catch (SQLException e) {
             throw new RuntimeException("SQL Error : " + e.getMessage());
+        }
+
+        return s;
+    }
+
+    public StudentDTO getOneDTO(Long id) {
+        StudentDTO s = null;
+
+        String requete = "SELECT student_id, first_name, last_name, birth_date, login, s.section_id, s.section_name, s.delegate_id, year_result, course_id, locality FROM student " +
+                "JOIN section s on student.section_id = s.section_id " +
+                "WHERE student_id = ?";
+
+        try (
+                Connection co = ConnectionFactory.getConnection();
+        ) {
+                PreparedStatement stmt = co.prepareStatement(requete);
+                stmt.setLong(1, id);
+                ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                s = Mapper.toStudentDTO2(rs);
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
 
         return s;
@@ -74,7 +96,27 @@ public class StudentDAO implements DAO<Student, Long>{
         ) { // La connexion sera auto fermée si on met ça dans le try()
 
             while(rs.next()) {
-                Student s = extract(rs);
+                Student s = Mapper.toStudentDTO(rs);
+                students.add(s);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL Error : " + e.getMessage());
+        }
+        return students;
+    }
+
+    public List<StudentDTO> getAllDTO() {
+        List<StudentDTO> students = new ArrayList<>();
+        try (
+                Connection co = ConnectionFactory.getConnection();
+                Statement stmt = co.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT student_id, first_name, last_name, birth_date, login, s.section_id, s.section_name, s.delegate_id, year_result, course_id, locality FROM student " +
+                                                "JOIN section s on student.section_id = s.section_id");
+        ) { // La connexion sera auto fermée si on met ça dans le try()
+
+            while(rs.next()) {
+                StudentDTO s = Mapper.toStudentDTO2(rs);
                 students.add(s);
             }
 
@@ -121,18 +163,6 @@ public class StudentDAO implements DAO<Student, Long>{
         }
     }
 
-    private Student extract(ResultSet rs) throws SQLException {
-        return new Student(rs.getLong(1),
-                rs.getString(2),
-                rs.getString(3),
-                rs.getTimestamp(4) == null ? null : rs.getTimestamp(4).toLocalDateTime(),
-                rs.getString(5),
-                rs.getLong(6),
-                rs.getInt(7),
-                rs.getString(8),
-                rs.getString(9));
-    }
-
     public List<Student> getStudentSup(int value){
         List<Student> students = new ArrayList<>();
         try (
@@ -142,7 +172,7 @@ public class StudentDAO implements DAO<Student, Long>{
         ) {
 
             while(rs.next()) {
-                Student s = extract(rs);
+                Student s = Mapper.toStudentDTO(rs);
                 students.add(s);
             }
 

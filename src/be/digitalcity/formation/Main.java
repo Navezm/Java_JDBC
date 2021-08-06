@@ -22,10 +22,11 @@ public class Main {
 
         StudentDAO dao2 = StudentDAO.getInstance();
 
-        Student stud = new Student(101L,"Martin","Navez", LocalDateTime.now(),"navezm",1010,15,"0","Bx");
+//        Student stud = new Student(101L,"Martin","Navez", LocalDateTime.now(),"navezm",1010,15,"0","Bx");
 
-        System.out.println(dao2.update(stud));
+        System.out.println(dao2.getOneDTO(15L));
 
     }
+
 
 }

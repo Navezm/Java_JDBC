@@ -1,6 +1,7 @@
 package be.digitalcity.formation.data_access;
 
 import be.digitalcity.formation.ConnectionFactory;
+import be.digitalcity.formation.mapper.Mapper;
 import be.digitalcity.formation.model.Section;
 import be.digitalcity.formation.model.Student;
 
@@ -57,7 +58,7 @@ public class SectionDAO implements DAO<Section, Long> {
         ) {
 
             if(rs.next()) {
-                s = extract(rs);
+                s = Mapper.toSectionDTO(rs);
             }
 
         } catch (SQLException e) {
@@ -77,7 +78,7 @@ public class SectionDAO implements DAO<Section, Long> {
         ) { // La connexion sera auto fermée si on met ça dans le try()
 
             while(rs.next()) {
-                Section s = extract(rs);
+                Section s = Mapper.toSectionDTO(rs);
                 sections.add(s);
             }
 
@@ -125,18 +126,6 @@ public class SectionDAO implements DAO<Section, Long> {
             return false;
         }
 
-    }
-
-    private Section extract(ResultSet rs) throws SQLException {
-        Section s = new Section();
-//                s.setId(rs.getLong("section_id"));
-        s.setId(rs.getLong(1));
-//                s.setName(rs.getString("section_name"));
-        s.setName(rs.getString(2));
-//                s.setDelegateId(rs.getInt("delegate_id"));
-        s.setDelegateId(rs.getInt(3));
-
-        return s;
     }
 
 }

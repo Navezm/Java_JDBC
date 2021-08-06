@@ -38,4 +38,14 @@ public class Section {
     public void setDelegateId(int delegateId) {
         this.delegateId = delegateId;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("Section{");
+        sb.append("id=").append(id);
+        sb.append(", name='").append(name).append('\'');
+        sb.append(", delegateId=").append(delegateId);
+        sb.append('}');
+        return sb.toString();
+    }
 }
