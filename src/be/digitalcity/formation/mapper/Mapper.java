@@ -6,6 +6,7 @@ import be.digitalcity.formation.model.StudentDTO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 
 public class Mapper {
 
@@ -34,18 +35,20 @@ public class Mapper {
     }
 
     public static StudentDTO toStudentDTO2(ResultSet rs) throws SQLException {
-        return new StudentDTO(
-                rs.getLong(1),
-                rs.getString(2),
-                rs.getString(3),
-                rs.getTimestamp(4) == null ? null : rs.getTimestamp(4).toLocalDateTime(),
-                rs.getString(5),
-                rs.getInt(6),
+
+        long id = rs.getLong(1);
+        String first_name = rs.getString(2);
+        String last_name = rs.getString(3);
+        LocalDateTime birth = rs.getTimestamp(4) == null ? null : rs.getTimestamp(4).toLocalDateTime();
+        String login = rs.getString(5);
+        Section section = new Section(rs.getInt(6),
                 rs.getString(7),
-                rs.getInt(8),
-                rs.getInt(9),
-                rs.getString(10),
-                rs.getString(11));
+                rs.getInt(8));
+        int year_result = rs.getInt(9);
+        String course_id = rs.getString(10);
+        String locality = rs.getString(11);
+
+        return new StudentDTO(id, first_name, last_name, birth, login, section, year_result, course_id, locality);
     }
 
 }

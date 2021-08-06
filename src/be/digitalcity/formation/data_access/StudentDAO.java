@@ -25,14 +25,23 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         if(toInsert == null)
             throw new IllegalArgumentException("toInsert shouldn't be null");
 
+        String requete = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (
                 Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
         ) {
+                PreparedStatement stmt = co.prepareStatement(requete);
+                stmt.setLong(1, toInsert.getId());
+                stmt.setString(2, toInsert.getFirstName());
+                stmt.setString(3, toInsert.getLastName());
+                stmt.setTimestamp(4, Timestamp.valueOf(toInsert.getBirthDate()));
+                stmt.setString(5, toInsert.getLogin());
+                stmt.setInt(6, (int)toInsert.getSection().getId());
+                stmt.setInt(7, toInsert.getYearResult());
+                stmt.setString(8, toInsert.getCourseId());
+                stmt.setString(9, toInsert.getLocality());
 
-            return 0 < stmt.executeUpdate("INSERT INTO student VALUES "+
-                    "( "+ toInsert.getId() +", "+ toInsert.getFirstName() +", "+ toInsert.getLastName() + ", " + toInsert.getBirthDate() + ", " + toInsert.getLogin() +
-                    ", " + toInsert.getSection().getId() + ", " + toInsert.getYearResult() + ", " + toInsert.getCourseId() + ", " + toInsert.getLocality() + " )" );
+            return 0 < stmt.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -93,15 +102,23 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
             throw new IllegalArgumentException("student shouldn't be null");
         }
 
+        String requete = "UPDATE student SET first_name = ?, last_name = ?, birth_date = ?, login = ?, section_id = ?, year_result = ?, course_id = ?, locality = ? WHERE student_id = ?";
+
         try (
                 Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
         ) {
+                PreparedStatement stmt = co.prepareStatement(requete);
+                stmt.setString(1, student.getFirstName());
+                stmt.setString(2, student.getLastName());
+                stmt.setTimestamp(3, Timestamp.valueOf(student.getBirthDate()));
+                stmt.setString(4, student.getLogin());
+                stmt.setInt(5, (int)student.getSection().getId());
+                stmt.setInt(6, student.getYearResult());
+                stmt.setString(7, student.getCourseId());
+                stmt.setString(8, student.getLocality());
+                stmt.setLong(9, student.getId());
 
-            return 0 < stmt.executeUpdate("UPDATE student " +
-                    " SET first_name='"+ student.getFirstName() + "'" +", last_name='" + student.getLastName() + "'" + ", birth_date='" + student.getBirthDate() + "'" +
-                    ", login='" + student.getLogin() + "'" + ", section_id='" + student.getSection().getId() + "'" + ", year_result='" + student.getYearResult() + "'" + ", course_id='" + student.getCourseId() + "'" +
-                    " WHERE student_id = "+ student.getId());
+            return 0 < stmt.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -111,12 +128,16 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
 
     @Override
     public boolean delete(Long id) {
+
+        String requete = "DELETE FROM student WHERE student_id = ?";
+
         try (
                 Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
         ) {
+                PreparedStatement stmt = co.prepareStatement(requete);
+                stmt.setLong(1, id);
 
-            return 0 < stmt.executeUpdate("DELETE FROM student WHERE student_id = " + id);
+            return 0 < stmt.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -124,16 +145,20 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         }
     }
 
-    public List<Student> getStudentSup(int value){
-        List<Student> students = new ArrayList<>();
+    public List<StudentDTO> getStudentSup(int value){
+        List<StudentDTO> students = new ArrayList<>();
+
+        String requete = "SELECT * FROM student WHERE year_result > ?";
+
         try (
                 Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE year_result > " + value);
         ) {
+                PreparedStatement stmt = co.prepareStatement(requete);
+                stmt.setInt(1, value);
+                ResultSet rs = stmt.executeQuery();
 
             while(rs.next()) {
-                Student s = Mapper.toStudentDTO(rs);
+                StudentDTO s = Mapper.toStudentDTO2(rs);
                 students.add(s);
             }
 
@@ -144,12 +169,16 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
     }
 
     public boolean deleteWithName(String name){
+
+        String requete = "DELETE FROM student WHERE first_name = ?";
+
         try (
                 Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
         ) {
+                PreparedStatement stmt = co.prepareStatement(requete);
+                stmt.setString(1, name);
 
-            return 0 < stmt.executeUpdate("DELETE FROM student WHERE first_name = " + "'" + name + "'");
+            return 0 < stmt.executeUpdate();
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

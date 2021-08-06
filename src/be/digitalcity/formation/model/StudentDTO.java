@@ -14,16 +14,13 @@ public class StudentDTO {
     private String courseId;
     private String locality;
 
-    public StudentDTO(){
-    }
-
-    public StudentDTO(long id, String firstName, String lastName, LocalDateTime birthDate, String login, int section_id, String section_name, int delegate_id, int yearResult, String courseId, String locality) {
+    public StudentDTO(long id, String firstName, String lastName, LocalDateTime birthDate, String login, Section section, int yearResult, String courseId, String locality) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
         this.login = login;
-        this.section = new Section(section_id, section_name, delegate_id);
+        this.section = section;
         this.yearResult = yearResult;
         this.courseId = courseId;
         this.locality = locality;
