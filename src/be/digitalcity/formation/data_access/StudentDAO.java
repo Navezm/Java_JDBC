@@ -25,8 +25,22 @@ public class StudentDAO implements DAO<Student, Long>{
 
     @Override
     public boolean insert(Student toInsert) {
+        if(toInsert == null)
+            throw new IllegalArgumentException("toInsert shouldn't be null");
 
-        return false;
+        try (
+                Connection co = ConnectionFactory.getConnection();
+                Statement stmt = co.createStatement();
+        ) {
+
+            return 0 < stmt.executeUpdate("INSERT INTO student VALUES "+
+                    "( "+ toInsert.getId() +", "+ toInsert.getFirstName() +", "+ toInsert.getLastName() + ", " + toInsert.getBirthDate() + ", " + toInsert.getLogin() +
+                    ", " + toInsert.getSectionId() + ", " + toInsert.getYearResult() + ", " + toInsert.getCourseId() + ", " + toInsert.getLocality() + " )" );
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 
     @Override
@@ -83,6 +97,7 @@ public class StudentDAO implements DAO<Student, Long>{
 
             return 0 < stmt.executeUpdate("UPDATE student " +
                     " SET first_name="+ student.getFirstName() +", last_name="+ student.getLastName() + ", birth_date=" + student.getBirthDate() +
+                    ", login=" + student.getLogin() + ", section_id=" + student.getSectionId() + ", year_result=" + student.getYearResult() + ", course_id=" + student.getCourseId() +
                     " WHERE section_id = "+ student.getId());
 
         } catch (SQLException e) {
@@ -116,5 +131,38 @@ public class StudentDAO implements DAO<Student, Long>{
                 rs.getInt(7),
                 rs.getString(8),
                 rs.getString(9));
+    }
+
+    public List<Student> getStudentSup(int value){
+        List<Student> students = new ArrayList<>();
+        try (
+                Connection co = ConnectionFactory.getConnection();
+                Statement stmt = co.createStatement();
+                ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE year_result > " + value);
+        ) {
+
+            while(rs.next()) {
+                Student s = extract(rs);
+                students.add(s);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("SQL Error : " + e.getMessage());
+        }
+        return students;
+    }
+
+    public boolean deleteWithName(String name){
+        try (
+                Connection co = ConnectionFactory.getConnection();
+                Statement stmt = co.createStatement();
+        ) {
+
+            return 0 < stmt.executeUpdate("DELETE FROM student WHERE first_name = " + name);
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
     }
 }
