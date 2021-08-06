@@ -24,7 +24,7 @@ public class Main {
 
 //        Student stud = new Student(101L,"Martin","Navez", LocalDateTime.now(),"navezm",1010,15,"0","Bx");
 
-        System.out.println(dao2.getOneDTO(15L));
+        System.out.println(dao2.getOne(15L));
 
     }
 

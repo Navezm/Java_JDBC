@@ -10,7 +10,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StudentDAO implements DAO<Student, Long>{
+public class StudentDAO implements DAO<StudentDTO, Long>{
 
 //    Singleton
     private static StudentDAO instance;
@@ -21,7 +21,7 @@ public class StudentDAO implements DAO<Student, Long>{
 //    Fin Singleton
 
     @Override
-    public boolean insert(Student toInsert) {
+    public boolean insert(StudentDTO toInsert) {
         if(toInsert == null)
             throw new IllegalArgumentException("toInsert shouldn't be null");
 
@@ -32,7 +32,7 @@ public class StudentDAO implements DAO<Student, Long>{
 
             return 0 < stmt.executeUpdate("INSERT INTO student VALUES "+
                     "( "+ toInsert.getId() +", "+ toInsert.getFirstName() +", "+ toInsert.getLastName() + ", " + toInsert.getBirthDate() + ", " + toInsert.getLogin() +
-                    ", " + toInsert.getSectionId() + ", " + toInsert.getYearResult() + ", " + toInsert.getCourseId() + ", " + toInsert.getLocality() + " )" );
+                    ", " + toInsert.getSection().getId() + ", " + toInsert.getYearResult() + ", " + toInsert.getCourseId() + ", " + toInsert.getLocality() + " )" );
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -41,27 +41,7 @@ public class StudentDAO implements DAO<Student, Long>{
     }
 
     @Override
-    public Student getOne(Long id) {
-        Student s = null;
-
-        try (
-                Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM student WHERE student_id = " + id);
-        ) {
-
-            if(rs.next()) {
-                s = Mapper.toStudentDTO(rs);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("SQL Error : " + e.getMessage());
-        }
-
-        return s;
-    }
-
-    public StudentDTO getOneDTO(Long id) {
+    public StudentDTO getOne(Long id) {
         StudentDTO s = null;
 
         String requete = "SELECT student_id, first_name, last_name, birth_date, login, s.section_id, s.section_name, s.delegate_id, year_result, course_id, locality FROM student " +
@@ -87,26 +67,7 @@ public class StudentDAO implements DAO<Student, Long>{
     }
 
     @Override
-    public List<Student> getAll() {
-        List<Student> students = new ArrayList<>();
-        try (
-                Connection co = ConnectionFactory.getConnection();
-                Statement stmt = co.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM student");
-        ) { // La connexion sera auto fermée si on met ça dans le try()
-
-            while(rs.next()) {
-                Student s = Mapper.toStudentDTO(rs);
-                students.add(s);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException("SQL Error : " + e.getMessage());
-        }
-        return students;
-    }
-
-    public List<StudentDTO> getAllDTO() {
+    public List<StudentDTO> getAll() {
         List<StudentDTO> students = new ArrayList<>();
         try (
                 Connection co = ConnectionFactory.getConnection();
@@ -127,7 +88,7 @@ public class StudentDAO implements DAO<Student, Long>{
     }
 
     @Override
-    public boolean update(Student student) {
+    public boolean update(StudentDTO student) {
         if (student == null) {
             throw new IllegalArgumentException("student shouldn't be null");
         }
@@ -139,7 +100,7 @@ public class StudentDAO implements DAO<Student, Long>{
 
             return 0 < stmt.executeUpdate("UPDATE student " +
                     " SET first_name='"+ student.getFirstName() + "'" +", last_name='" + student.getLastName() + "'" + ", birth_date='" + student.getBirthDate() + "'" +
-                    ", login='" + student.getLogin() + "'" + ", section_id='" + student.getSectionId() + "'" + ", year_result='" + student.getYearResult() + "'" + ", course_id='" + student.getCourseId() + "'" +
+                    ", login='" + student.getLogin() + "'" + ", section_id='" + student.getSection().getId() + "'" + ", year_result='" + student.getYearResult() + "'" + ", course_id='" + student.getCourseId() + "'" +
                     " WHERE student_id = "+ student.getId());
 
         } catch (SQLException e) {
