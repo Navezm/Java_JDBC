@@ -5,6 +5,7 @@ import be.digitalcity.formation.data_access.SectionDAO;
 import be.digitalcity.formation.data_access.StudentDAO;
 import be.digitalcity.formation.model.Section;
 import be.digitalcity.formation.model.Student;
+import be.digitalcity.formation.model.StudentDTO;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -25,8 +26,13 @@ public class Main {
 
 //        System.out.println(dao2.getOne(15L));
 
-        System.out.println(dao2.getAll());
+//        System.out.println(dao2.getAll());
+//        System.out.println(dao2.delete(142L));
 
+
+
+        StudentDTO student = new StudentDTO(120L,"Martin", "Nav", LocalDateTime.now(), "navm", SectionDAO.getInstance().getOne(1010L), 12, "0", "bx");
+        System.out.println(dao2.insert(student));
     }
 
 

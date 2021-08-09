@@ -25,21 +25,19 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         if(toInsert == null)
             throw new IllegalArgumentException("toInsert shouldn't be null");
 
-        String requete = "INSERT INTO student VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
         try (
                 Connection co = ConnectionFactory.getConnection();
         ) {
-                PreparedStatement stmt = co.prepareStatement(requete);
-                stmt.setLong(1, toInsert.getId());
-                stmt.setString(2, toInsert.getFirstName());
-                stmt.setString(3, toInsert.getLastName());
-                stmt.setTimestamp(4, Timestamp.valueOf(toInsert.getBirthDate()));
-                stmt.setString(5, toInsert.getLogin());
-                stmt.setInt(6, (int)toInsert.getSection().getId());
-                stmt.setInt(7, toInsert.getYearResult());
-                stmt.setString(8, toInsert.getCourseId());
-                stmt.setString(9, toInsert.getLocality());
+            CallableStatement stmt = co.prepareCall("call insert(?,?,?,?,?,?,?,?,?)");
+            stmt.setInt(1, (int) toInsert.getId());
+            stmt.setString(2, toInsert.getFirstName());
+            stmt.setString(3, toInsert.getLastName());
+            stmt.setTimestamp(4, Timestamp.valueOf(toInsert.getBirthDate()));
+            stmt.setString(5, toInsert.getLogin());
+            stmt.setInt(6, (int)toInsert.getSection().getId());
+            stmt.setInt(7, toInsert.getYearResult());
+            stmt.setString(8, toInsert.getCourseId());
+            stmt.setString(9, toInsert.getLocality());
 
             return 0 < stmt.executeUpdate();
 
@@ -60,9 +58,9 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         try (
                 Connection co = ConnectionFactory.getConnection();
         ) {
-                PreparedStatement stmt = co.prepareStatement(requete);
-                stmt.setLong(1, id);
-                ResultSet rs = stmt.executeQuery();
+            PreparedStatement stmt = co.prepareStatement(requete);
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
                 s = Mapper.toStudentDTO2(rs);
@@ -107,16 +105,16 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         try (
                 Connection co = ConnectionFactory.getConnection();
         ) {
-                PreparedStatement stmt = co.prepareStatement(requete);
-                stmt.setString(1, student.getFirstName());
-                stmt.setString(2, student.getLastName());
-                stmt.setTimestamp(3, Timestamp.valueOf(student.getBirthDate()));
-                stmt.setString(4, student.getLogin());
-                stmt.setInt(5, (int)student.getSection().getId());
-                stmt.setInt(6, student.getYearResult());
-                stmt.setString(7, student.getCourseId());
-                stmt.setString(8, student.getLocality());
-                stmt.setLong(9, student.getId());
+            PreparedStatement stmt = co.prepareStatement(requete);
+            stmt.setString(1, student.getFirstName());
+            stmt.setString(2, student.getLastName());
+            stmt.setTimestamp(3, Timestamp.valueOf(student.getBirthDate()));
+            stmt.setString(4, student.getLogin());
+            stmt.setInt(5, (int)student.getSection().getId());
+            stmt.setInt(6, student.getYearResult());
+            stmt.setString(7, student.getCourseId());
+            stmt.setString(8, student.getLocality());
+            stmt.setLong(9, student.getId());
 
             return 0 < stmt.executeUpdate();
 
@@ -129,13 +127,13 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
     @Override
     public boolean delete(Long id) {
 
-        String requete = "DELETE FROM student WHERE student_id = ?";
+//        String requete = "DELETE FROM student WHERE student_id = ?";
 
         try (
                 Connection co = ConnectionFactory.getConnection();
         ) {
-                PreparedStatement stmt = co.prepareStatement(requete);
-                stmt.setLong(1, id);
+            CallableStatement stmt = co.prepareCall("call delete(?)");
+            stmt.setInt(1, Math.toIntExact(id));
 
             return 0 < stmt.executeUpdate();
 
@@ -153,9 +151,9 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         try (
                 Connection co = ConnectionFactory.getConnection();
         ) {
-                PreparedStatement stmt = co.prepareStatement(requete);
-                stmt.setInt(1, value);
-                ResultSet rs = stmt.executeQuery();
+            PreparedStatement stmt = co.prepareStatement(requete);
+            stmt.setInt(1, value);
+            ResultSet rs = stmt.executeQuery();
 
             while(rs.next()) {
                 StudentDTO s = Mapper.toStudentDTO2(rs);
@@ -175,8 +173,8 @@ public class StudentDAO implements DAO<StudentDTO, Long>{
         try (
                 Connection co = ConnectionFactory.getConnection();
         ) {
-                PreparedStatement stmt = co.prepareStatement(requete);
-                stmt.setString(1, name);
+            PreparedStatement stmt = co.prepareStatement(requete);
+            stmt.setString(1, name);
 
             return 0 < stmt.executeUpdate();
 
